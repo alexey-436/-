@@ -1,113 +1,114 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const calculator = {
-    displayValue: '0',
-    firstOperand: null,
-    waitingForSecondOperand: false,
-    operator: null,
+
+document.addEventListener('DOMContentLoaded', () => { // Чекає на завантаження HTML-документа
+  const calculator = { // Об'єкт, який зберігає стан калькулятора
+    displayValue: '0', // Початкове значення дисплея калькулятора
+    firstOperand: null, // Зберігає перший операнд для обчислень
+    waitingForSecondOperand: false, // Вказує, чи очікується введення другого операнду
+    operator: null, // Зберігає оператор, який використовується в обчисленнях
   };
 
-  function updateDisplay() {
-    const display = document.querySelector('.calculator-screen');
-    display.value = calculator.displayValue;
+  function updateDisplay() { // Оновлює значення дисплея калькулятора
+    const display = document.querySelector('.calculator-screen'); // Знаходить елемент дисплея
+    display.value = calculator.displayValue; // Встановлює значення дисплея калькулятора
   }
 
-  function inputDigit(digit) {
-    const { displayValue, waitingForSecondOperand } = calculator;
+  function inputDigit(digit) { // Обробляє введення цифри
+    const { displayValue, waitingForSecondOperand } = calculator; // Отримує поточні значення дисплея та прапора очікування другого операнду
 
-    if (waitingForSecondOperand === true) {
-      calculator.displayValue = digit;
-      calculator.waitingForSecondOperand = false;
+    if (waitingForSecondOperand === true) { // Якщо очікується введення другого операнду
+      calculator.displayValue = digit; // Встановлює значення дисплея як введену цифру
+      calculator.waitingForSecondOperand = false; // Скидає прапор очікування другого операнду
     } else {
-      calculator.displayValue = displayValue === '0' ? digit : displayValue + digit;
+      calculator.displayValue = displayValue === '0' ? digit : displayValue + digit; // Додає введену цифру до поточного значення дисплея
     }
 
-    console.log(calculator);
+    console.log(calculator); // Виводить поточний стан калькулятора у консоль
   }
 
-  function inputDecimal(dot) {
-    if (calculator.waitingForSecondOperand === true) return;
+  function inputDecimal(dot) { // Обробляє введення десяткової крапки
+    if (calculator.waitingForSecondOperand === true) return; // Якщо очікується введення другого операнду, не додає крапку
 
-    if (!calculator.displayValue.includes(dot)) {
-      calculator.displayValue += dot;
+    if (!calculator.displayValue.includes(dot)) { // Якщо у дисплеї ще немає крапки
+      calculator.displayValue += dot; // Додає крапку до значення дисплея
     }
   }
 
-  function handleOperator(nextOperator) {
-    const { firstOperand, displayValue, operator } = calculator;
-    const inputValue = parseFloat(displayValue);
+  function handleOperator(nextOperator) { // Обробляє введення оператора
+    const { firstOperand, displayValue, operator } = calculator; // Отримує поточні значення першого операнду, дисплея та оператора
+    const inputValue = parseFloat(displayValue); // Перетворює значення дисплея у число
 
-    if (operator && calculator.waitingForSecondOperand) {
-      calculator.operator = nextOperator;
-      return;
+    if (operator && calculator.waitingForSecondOperand) { // Якщо вже є оператор і очікується другий операнд
+      calculator.operator = nextOperator; // Оновлює оператор
+      return; // Виходить з функції
     }
 
-    if (firstOperand == null) {
-      calculator.firstOperand = inputValue;
-    } else if (operator) {
-      const currentValue = firstOperand || 0;
-      const result = performCalculation[operator](currentValue, inputValue);
+    if (firstOperand == null) { // Якщо перший операнд відсутній
+      calculator.firstOperand = inputValue; // Встановлює перший операнд як поточне значення дисплея
+    } else if (operator) { // Якщо є оператор
+      const currentValue = firstOperand || 0; // Встановлює поточне значення як перший операнд або 0
+      const result = performCalculation[operator](currentValue, inputValue); // Виконує обчислення з використанням оператора
 
-      calculator.displayValue = String(result);
-      calculator.firstOperand = result;
+      calculator.displayValue = String(result); // Встановлює результат обчислень як значення дисплея
+      calculator.firstOperand = result; // Встановлює результат як перший операнд
     }
 
-    calculator.waitingForSecondOperand = true;
-    calculator.operator = nextOperator;
+    calculator.waitingForSecondOperand = true; // Встановлює прапор очікування другого операнду
+    calculator.operator = nextOperator; // Оновлює оператор
 
-    console.log(calculator);
+    console.log(calculator); // Виводить поточний стан калькулятора у консоль
   }
 
-  const performCalculation = {
-    '/': (firstOperand, secondOperand) => firstOperand / secondOperand,
+  const performCalculation = { // Об'єкт із методами для виконання обчислень
+    '/': (firstOperand, secondOperand) => firstOperand / secondOperand, // Метод для ділення
 
-    '*': (firstOperand, secondOperand) => firstOperand * secondOperand,
+    '*': (firstOperand, secondOperand) => firstOperand * secondOperand, // Метод для множення
 
-    '+': (firstOperand, secondOperand) => firstOperand + secondOperand,
+    '+': (firstOperand, secondOperand) => firstOperand + secondOperand, // Метод для додавання
 
-    '-': (firstOperand, secondOperand) => firstOperand - secondOperand,
+    '-': (firstOperand, secondOperand) => firstOperand - secondOperand, // Метод для віднімання
 
-    '=': (firstOperand, secondOperand) => secondOperand
+    '=': (firstOperand, secondOperand) => secondOperand // Повертає другий операнд як результат
   };
 
-  function resetCalculator() {
-    calculator.displayValue = '0';
-    calculator.firstOperand = null;
-    calculator.waitingForSecondOperand = false;
-    calculator.operator = null;
-    console.log(calculator);
+  function resetCalculator() { // Скидає стан калькулятора до початкового
+    calculator.displayValue = '0'; // Скидає значення дисплея
+    calculator.firstOperand = null; // Очищає перший операнд
+    calculator.waitingForSecondOperand = false; // Скидає прапор очікування другого операнду
+    calculator.operator = null; // Очищає оператор
+    console.log(calculator); // Виводить поточний стан калькулятора у консоль
   }
 
-  const keys = document.querySelector('.calculator-keys');
-  keys.addEventListener('click', (event) => {
-    const { target } = event;
-    const { value } = target;
+  const keys = document.querySelector('.calculator-keys'); // Знаходить елемент із клавішами калькулятора
+  keys.addEventListener('click', (event) => { // Додає обробник подій для кліків по клавішам
+    const { target } = event; // Отримує елемент, на який натиснули
+    const { value } = target; // Отримує значення натиснутої клавіші
 
-    if (!target.matches('button')) {
-      return;
+    if (!target.matches('button')) { // Якщо натиснутий елемент не є кнопкою
+      return; // Виходить з функції
     }
 
-    switch (value) {
+    switch (value) { // Обробляє різні значення натиснутих клавіш
       case '+':
       case '-':
       case '*':
       case '/':
       case '=':
-        handleOperator(value);
+        handleOperator(value); // Обробляє оператори
         break;
       case '.':
-        inputDecimal(value);
+        inputDecimal(value); // Обробляє введення десяткової крапки
         break;
       case 'all-clear':
-        resetCalculator();
+        resetCalculator(); // Скидає калькулятор
         break;
       default:
-        if (Number.isInteger(parseFloat(value))) {
-          inputDigit(value);
+        if (Number.isInteger(parseFloat(value))) { // Якщо натиснута клавіша є числом
+          inputDigit(value); // Обробляє введення цифри
         }
     }
 
-    updateDisplay();
+    updateDisplay(); // Оновлює дисплей після кожної операції
   });
 
-  updateDisplay();
+  updateDisplay(); // Оновлює дисплей при завантаженні сторінки
 });
